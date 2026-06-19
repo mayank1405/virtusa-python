@@ -4,6 +4,10 @@ import json
 import csv
 import datetime
 import regression
+import os
+
+from dotenv import load_dotenv
+
 
 
 
@@ -45,6 +49,7 @@ class Temperature:
         url=f"https://archive-api.open-meteo.com/v1/archive?latitude={latitude}&longitude={longitude}&start_date={past}&end_date={self.today}&daily=temperature_2m_max,temperature_2m_min"
         response=requests.get(url=url)
         a=json.loads(response.text)
+        print(a)
         day_list=a["daily"]["time"]
         temp_max=a["daily"]["temperature_2m_max"]
         temp_min=a["daily"]["temperature_2m_min"]
@@ -72,8 +77,9 @@ class Temperature:
         return value
 
 
+key=os.getenv("API_KEY")
 
-obj=Temperature("b7345dfbf754f3bd086b3f23ecb99a23")
+obj=Temperature(key)
 
 
 while True:
@@ -81,28 +87,43 @@ while True:
     print("Welcome to the weather application")
     print("What would you like to do")
 
-    print(
-        '''
-        1. SHOW TODAYS WEATHER DETAILS
-        2. SHOW PAST 7 DAYS WEATHER DETAILS
-        3. PLOT GRAPH FOR PAST 7 DAYS WEATHER
-        4. PREDICT TEMPERATURE BASED ON PAST DATA 
 
-'''
-    )
+
+    print("""
+    ╔══════════════════════════════════════════════╗
+    ║            WEATHER ANALYTICS                 ║
+    ╠══════════════════════════════════════════════╣
+    ║  1. Today's Weather                          ║
+    ║  2. Past 7 Days Weather                      ║
+    ║  3. Temperature Trend Graph                  ║
+    ║  4. Predict Future Temperature               ║
+    ║                                              ║
+    ╚══════════════════════════════════════════════╝
+    """)
+
+#     print(
+        
+#         '''
+#         1. SHOW TODAYS WEATHER DETAILS
+#         2. SHOW PAST 7 DAYS WEATHER DETAILS
+#         3. PLOT GRAPH FOR PAST 7 DAYS WEATHER
+#         4. PREDICT TEMPERATURE BASED ON PAST DATA 
+
+# '''
+#     )
     val=int(input("ENTER YOUR CHOICE"))
 
     match val:
 
         case 1:
             print("TYPE 1 TO PROVIDE CITY NAME, TYPE 2 TO PROVIDE COORDINATES")
-            choice=int(input("ENTER CHOICE"))
+            choice=int(input("ENTER CHOICE "))
             city_name=None
             if choice == 1:
-                city_name=input("ENTER CITY NAME")
+                city_name=input("ENTER CITY NAME ")
             elif choice == 2:
-                latitude=float(input("ENTER LATITUDE"))
-                longitude = float(input("ENTER LONGITUDE"))
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
             else:
                 
                 raise Exception("INVALID INPUT")
@@ -114,8 +135,33 @@ while True:
             print(x)
         
         case 2:
-            latitude=float(input("ENTER LATITUDE"))
-            longitude = float(input("ENTER LONGITUDE"))
+
+            print("TYPE 1 TO PROVIDE CITY NAME, TYPE 2 TO PROVIDE COORDINATES")
+            choice=int(input("ENTER CHOICE "))
+            city_name=None
+            if choice == 1:
+                city_name=input("ENTER CITY NAME ")
+            elif choice == 2:
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
+            else:
+                
+                raise Exception("INVALID INPUT")
+            
+
+            if city_name:
+                geourl=f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit={1}&appid={key}"
+
+                response=requests.get(url=geourl)
+                alpha=response.json()
+                name=alpha[0]["name"]
+                latitude=alpha[0]["lat"]
+                longitude=alpha[0]["lon"]
+            
+            else:
+           
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
             tup=obj.temp_details_past7days(latitude=latitude, longitude=longitude)
             x=len(tup[0])
             for i in range(x):
@@ -125,19 +171,72 @@ while True:
 
         
         case 3:
-            latitude=float(input("ENTER LATITUDE"))
-            longitude = float(input("ENTER LONGITUDE"))
+
+            print("TYPE 1 TO PROVIDE CITY NAME, TYPE 2 TO PROVIDE COORDINATES")
+            choice=int(input("ENTER CHOICE "))
+            city_name=None
+            if choice == 1:
+                city_name=input("ENTER CITY NAME ")
+            elif choice == 2:
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
+            else:
+                
+                raise Exception("INVALID INPUT")
+            
+
+            if city_name:
+                geourl=f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit={1}&appid={key}"
+
+                response=requests.get(url=geourl)
+                alpha=response.json()
+                name=alpha[0]["name"]
+                latitude=alpha[0]["lat"]
+                longitude=alpha[0]["lon"]
+            
+            else:
+           
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
+            
             tup=obj.temp_details_past7days(latitude=latitude, longitude=longitude)
 
             obj.plot_graph_7days(tup[0],tup[1],tup[2])
         
 
         case 4:
-            latitude=float(input("ENTER LATITUDE"))
-            longitude = float(input("ENTER LONGITUDE"))
+
+
+            print("TYPE 1 TO PROVIDE CITY NAME, TYPE 2 TO PROVIDE COORDINATES")
+            choice=int(input("ENTER CHOICE "))
+            city_name=None
+            if choice == 1:
+                city_name=input("ENTER CITY NAME ")
+            elif choice == 2:
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
+            else:
+                
+                raise Exception("INVALID INPUT")
+            
+
+            if city_name:
+                geourl=f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit={1}&appid={key}"
+
+                response=requests.get(url=geourl)
+                alpha=response.json()
+                name=alpha[0]["name"]
+                latitude=alpha[0]["lat"]
+                longitude=alpha[0]["lon"]
+            
+            else:
+           
+                latitude=float(input("ENTER LATITUDE "))
+                longitude = float(input("ENTER LONGITUDE "))
+
             tup=obj.temp_details_past7days(latitude=latitude, longitude=longitude)
             print("CHOOSE 1 MAX TEMPERATURE PREDICTION AND 2 FOR MIN TEMPERATURE PREDICTION")
-            choice=int(input("enter choice"))
+            choice=int(input("enter choice" ))
         
             if choice ==1:
                 val=obj.predict_temp(tup[1])
